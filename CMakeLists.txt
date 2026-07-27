@@ -309,10 +309,6 @@ add_praat_subdir(
     SOURCES ${SENSORS_SOURCES}
 )
 
-if(APPLE)
-    target_compile_options(praatmex PRIVATE -ObjC++)
-endif()
-
 # ═══════════════════════════════════════════════════════════════════════════
 # MEX FILES
 # ═══════════════════════════════════════════════════════════════════════════
@@ -359,6 +355,3 @@ target_include_directories(praatmex PRIVATE
 target_compile_definitions(praatmex PRIVATE
     NO_GUI NO_GRAPHICS NO_NETWORK NOMINMAX UNICODE _UNICODE
 )
-if(APPLE)
-    target_compile_options(praatmex PRIVATE -ObjC++)
-endif()
