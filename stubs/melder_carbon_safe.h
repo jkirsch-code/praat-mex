@@ -27,8 +27,5 @@
 #if ! defined(EventAvail)
 	static inline bool EventAvail (unsigned short /* mask */, void * /* event */) { return false; }
 #endif
-#if ! defined(FlushEvents)
-	static inline void FlushEvents (unsigned short /* whichMask */, unsigned short /* stopMask */) { }
-#endif
 
 #endif /* _MELDER_CARBON_SAFE_H_ */
