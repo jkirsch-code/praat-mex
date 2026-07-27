@@ -1,0 +1,40 @@
+# intermediate build products for Windows and Linux
+*.o
+*.a
+
+# the project for MacOSX
+*.xcodeproj/
+
+# intermediate build products for MacOSX
+DerivedData
+
+# OSX-specific files
+.DS_Store
+
+# Windows-specific files
+Thumbs.db
+
+# editor temporaries
+*.kate-swp
+*.orig
+.cache/
+.idea/
+compile_commands.json
+
+# Praat temporary files
+*kanweg*
+
+# a file that everybody should copy explicitly from their makefiles directory
+# and then rename
+makefile.defs
+
+# executables
+praat
+Praat
+Praat.exe
+Praat.app
+
+# files created by R scripts in the test folders
+.Rdata
+.Rhistory
+.Rproj.user

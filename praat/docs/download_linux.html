@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Downloading Praat for Linux</title></head><body bgcolor="#CCCCFF">
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Downloading Praat for Linux
+</b></font></table></table>
+
+<hr><h3>1. Relying on your Linux distribution</h3>
+<p>If you’re on Ubuntu or Debian, the fastest way to install Praat is to type</p>
+<code style="white-space:pre-wrap">   sudo apt install praat
+</code>
+<p>into a terminal window. However, this way you may obtain a years-old version:</p>
+<ul>
+<li>Ubuntu 22.04 has Praat 6.2.09 from February 2022
+<li>Debian 12 has Praat 6.3.07 from February 2023
+<li>Ubuntu 24.04 has Praat 6.4.06 from February 2024
+<li>Debian 13 has Praat 6.4.27 from January 2025
+</ul>
+<p>This way may be sub-optimal, because Praat is updated quite often.
+See <a href="manual/What_s_new_.html">What’s new?</a> to see what’s new.</p>
+
+<hr><h3>2. Downloading the Linux edition directly</h3>
+<p>If you want the newest version of Praat, you can download it from this page
+if you have a Linux distribution from 2022 or younger
+and one of the three supported processor types:</p>
+<ul>
+<li>“Intel64”, also known as AMD64, x86_64 or x64 (the most common processor type in current use)
+<li>“ARM64”, also known as AArch64 (the second most common processor type in current use)
+<li>“s390x” (a big-endian processor used on LinuxONE Ubuntu)
+</ul>
+The editions of Praat downloadable from this page have been built with GCC 11;
+they run correctly on at least the following distributions:
+<ul>
+<li>Ubuntu 22.04 and 24.04
+<li>Fedora 38, 40 and 42
+<li>Debian 12 and 13
+<li>Centos 9 and 10
+</ul>
+To download, click on the compressed archive for your processor type:</p>
+<dl>
+<dd><b>normal edition</b> (for interactive work as well as scripting):<br>
+&nbsp;- for x64(v3): <b><a href="https://github.com/praat/praat/releases/download/v6.6.30/praat6630_linux-x64v3.tar.gz">praat6630_linux-x64v3.tar.gz</a></b> (30 June 2026; 62.6 MB) &nbsp; <b><-- most commonly downloaded</b><br>
+&nbsp;- for ARM64: <b><a href="https://github.com/praat/praat/releases/download/v6.6.30/praat6630_linux-arm64.tar.gz">praat6630_linux-arm64.tar.gz</a></b> (30 June 2026; 61.0 MB)<br>
+&nbsp;- for s390x: <b><a href="https://github.com/praat/praat/releases/download/v6.6.30/praat6630_linux-s390x.tar.gz">praat6630_linux-s390x.tar.gz</a></b> (30 June 2026; 61.9 MB)
+<dd>&nbsp;
+<dd><b>barren server edition</b> (no GUI, no network, no sound, no graphics):<br>
+&nbsp;- for x64(v3): <b><a href="https://github.com/praat/praat/releases/download/v6.6.30/praat6630_linux-x64v3-barren.tar.gz">praat6630_linux-x64v3-barren.tar.gz</a></b> (30 June 2026; 62.4 MB)<br>
+&nbsp;- for ARM64: <b><a href="https://github.com/praat/praat/releases/download/v6.6.30/praat6630_linux-arm64-barren.tar.gz">praat6630_linux-arm64-barren.tar.gz</a></b> (30 June 2026; 60.7 MB)<br>
+&nbsp;- for s390x: <b><a href="https://github.com/praat/praat/releases/download/v6.6.30/praat6630_linux-s390x-barren.tar.gz">praat6630_linux-s390x-barren.tar.gz</a></b> (30 June 2026; 61.7 MB)
+</dl>
+<p>Unpack with <b>gunzip</b> and <b>tar xvf</b>. This will create the executable file <b>praat</b>.
+You can remove the <b>tar</b> file.</p>
+
+<p>Praat will work fine wherever it is on your disk; just type <b>./praat</b> into a terminal window
+after cd-ing to Praat’s folder.</p>
+<p>If Praat doesn’t start immediately (i.e. it may complain about missing <code>.so</code> files),
+then you may have to install one or more standard (graphics or audio) libraries on which Praat depends.
+On Ubuntu or Debian these may be:</p>
+
+<code style="white-space:pre-wrap">   sudo apt install libgtk-3-0      # the graphics toolkit
+   sudo apt install libasound2      # the ALSA audio library
+   sudo apt install libpulse0       # the Pulse audio server
+   sudo apt install pipewire-jack   # the Jack audio library (overridden by Pipewire; from Ubuntu 24.04 on)
+                                    # Ubuntu 22.04: jackd2 and libjack0 instead (not via pipewire)
+   # on Debian perhaps also:
+       sudo apt install libjack0
+   # on Ubuntu sometimes:
+       sudo apt install libcanberra-gtk-module     # if your system complains about missing this
+</code>
+
+<p>On Fedora, the installs may be:</p>
+
+<code style="white-space:pre-wrap">   sudo dnf install gtk3                                # the graphics toolkit
+   sudo dnf install alsa-lib                            # the ALSA audio library
+   sudo dnf install pulseaudio-libs                     # the Pulse audio server
+   sudo dnf install pipewire-jack-audio-connection-kit  # the Jack audio library (overridden by PipeWire)
+                                                        # i.e. usually *not* jack-audio-connection-kit
+</code>
+
+<hr><h3>3. Downloading the Linux edition from Debian</h3>
+<p> If you prefer a more complete Praat package,
+or need to work on a processor not mentioned above,
+you can download a recent version from
+<a href="http://packages.debian.org/unstable/science/praat">Debian</a>.</p>
+
+<hr><h3>4. The last resort: build Praat yourself</h3>
+<p>If none of the above works, there is also always the possibility to compile Praat yourself
+from the <a href="download_sources.html">source code</a>.</p>
+
+<hr><h3>5. How to start</h3>
+
+<p>If you use Praat for the first time, choose <b>Intro</b> from the Help menu.</p>
+
+<hr><h3>6. Phonetic symbols</h3>
+<p>If you want to see good phonetic characters,
+you have to install the Doulos SIL and Charis (or Charis SIL) fonts,
+for instance from the packages <b>fonts-sil-charis</b> and <b>fonts-sil-doulos</b> on Debian or Ubuntu:</p>
+
+<code style="white-space:pre-wrap">   sudo apt install fonts-sil-doulos
+   sudo apt install fonts-sil-charis
+</code>
+
+<p>or on Fedora:</p>
+
+<code style="white-space:pre-wrap">   sudo dnf install sil-doulos-fonts
+   sudo dnf install sil-charis-fonts
+</code>
+
+<p>If you cannot install those packages, you can download the two fonts
+from <a href=http://www.sil.org>Summer Institute of Linguistics</a> and follow the installation instructions there.</p>
+
+<hr><h3>7. Running Praat from the command line</h3>
+<p>To run Praat from a terminal window,
+write a Praat script and specify that script on the command line, optionally with arguments, e.g.:</p>
+
+<code style="white-space:pre-wrap">   praat --run playsinewave.praat 377 0.9
+</code>
+
+<p>For details see <a href="manual/Scripting_6_9__Calling_from_the_command_line.html">Calling from the command line</a> in the Scripting manual.</p>
+
+<hr><h3>8. Known possible problems, and their solution</h3>
+<p><b>1. Sound not working?</b></p>
+<p>Audio on Linux is notoriously fragile. For playback, Praat either uses PulseAudio or Alsa,
+and you choose between these with Praat -> Preferences -> Sound playing preferences.</p>
+
+<p>In the SoundRecorder window: if you don’t see any devices, then ALSA isn’t available.
+You may then try to obtain a JACK device by starting Praat via (if you have Pipewire):</p>
+
+<code style="white-space:pre-wrap">   pw-jack praat
+</code>
+
+<p>or (if you don’t have Pipewire):</p>
+
+<code style="white-space:pre-wrap">   sudo apt install jackd libjack0
+   jack_control start     # starts the Jack server
+   praat
+</code>
+
+<hr><h3>9. Editions of Praat for older computers or older operating system versions</h3>
+<ul>
+<li>We do not create Praat editions for 32-bit Linux any longer (except for <a href=download_raspberrypi.html>Raspberry Pi</a>).
+The last one is <a href="https://github.com/praat/praat/releases/download/v6.1.15/praat6115_linux32.tar.gz">Praat 6.1.15</a> of 20 May 2020.
+If that is too old for you, you could try to compile a newer version by yourself from the sources.
+<li>The last version for Ubuntu 20.04 is Praat 6.4.30 of 29 April 2025:<br>
+&nbsp;- for x64: <a href="https://github.com/praat/praat/releases/download/v6.4.30/praat6430_linux-intel64.tar.gz">praat6430_linux-intel64.tar.gz</a>, <a href="https://github.com/praat/praat/releases/download/v6.4.30/praat6430_linux-arm64-barren.tar.gz">praat6430_linux-arm64-barren.tar.gz</a><br>
+&nbsp;- for ARM64: <a href="https://github.com/praat/praat/releases/download/v6.4.30/praat6430_linux-arm64.tar.gz">praat6430_linux-arm64.tar.gz</a> , <a href="https://github.com/praat/praat/releases/download/v6.4.30/praat6430_linux-intel64-barren.tar.gz">praat6430_linux-intel64-barren.tar.gz</a>
+</ul>
+
+<hr>
+Back to the <a href="/">Praat home page</a>.
+<font size=-1><br><br>(This page: &copy; Paul Boersma &amp; David Weenink 1992–2026, CC-BY-SA 4.0)</font>
+
+</body></html>

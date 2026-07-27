@@ -1,0 +1,1 @@
+runScript: "../manually/play.praat", "../fon/examples/example.wav"

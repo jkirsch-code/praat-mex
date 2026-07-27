@@ -1,0 +1,46 @@
+cff-version: 1.2.0
+title: "praatMEX: In-Process Praat Analysis for MATLAB"
+message: "If you use praatMEX in your research, please cite it using the metadata below."
+type: software
+authors:
+  - family-names: "Kirsch"
+    given-names: "Jonas"
+    orcid: "https://orcid.org/0000-0002-6024-183X"
+    affiliation: "Vocaliscope Project"
+repository-code: "https://github.com/jkirsch-code/praat-mex"
+license: "GPL-2.0-or-later"
+version: "1.0.0"
+date-released: "2026-07-26"
+keywords:
+  - "MATLAB"
+  - "MEX"
+  - "Praat"
+  - "phonetics"
+  - "voice analysis"
+  - "pitch"
+  - "formant"
+  - "jitter"
+  - "shimmer"
+  - "HNR"
+  - "GNE"
+  - "MFCC"
+  - "CPP"
+  - "speech processing"
+references:
+  - type: software
+    title: "Praat: doing phonetics by computer"
+    authors:
+      - family-names: "Boersma"
+        given-names: "Paul"
+      - family-names: "Weenink"
+        given-names: "David"
+    year: 2026
+    url: "https://www.fon.hum.uva.nl/praat/"
+    version: "7.0beta"
+    note: "Upstream Praat library, GPL v2+ licensed"
+abstract: >
+  praatMEX provides a MATLAB MEX interface to the Praat phonetics library,
+  enabling in-process execution of 11 speech analysis algorithms (pitch, formant,
+  intensity, harmonicity/HNR, jitter, shimmer, MFCC, spectrum, CPP/CPPS,
+  point process, TextGrid) with 100-500x speedup over the traditional
+  Praat.exe subprocess approach. Works in compiled MATLAB applications.

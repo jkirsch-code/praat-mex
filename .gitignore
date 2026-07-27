@@ -1,0 +1,28 @@
+# Build artifacts
+build/
+*.o
+*.obj
+*.lib
+*.pdb
+*.ilk
+*.exp
+*.log
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+
+# MATLAB generated
+*.asv
+*.mex*
+!*.mexw64
+!*.mexa64
+!*.mexmaca64
+!*.mexmaci64
+
+# OS files
+.DS_Store
+Thumbs.db

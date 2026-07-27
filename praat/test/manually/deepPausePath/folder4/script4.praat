@@ -1,0 +1,7 @@
+pauseScript: "4a before"
+appendInfo: "4a "
+pauseScript: "4a after"
+runScript: "script4+.praat"
+pauseScript: "4b before"
+appendInfo: "4b "
+pauseScript: "4b after"

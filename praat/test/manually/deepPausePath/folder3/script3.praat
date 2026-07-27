@@ -1,0 +1,7 @@
+pauseScript: "3a before"
+appendInfo: "3a "
+pauseScript: "3a after"
+runScript: "script3+.praat"
+pauseScript: "3b before"
+appendInfo: "3b "
+pauseScript: "3b after"

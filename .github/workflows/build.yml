@@ -1,0 +1,44 @@
+name: Build praatMEX
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            cmake_flags: '-DCMAKE_GENERATOR_PLATFORM=x64'
+            artifact: praatmex.mexw64
+          - os: ubuntu-latest
+            cmake_flags: ''
+            artifact: praatmex.mexa64
+          - os: macos-latest
+            cmake_flags: ''
+            artifact: praatmex.mexmaca64
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup MATLAB
+        uses: matlab-actions/setup-matlab@v2
+
+      - name: Configure (CMake)
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release ${{ matrix.cmake_flags }}
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Upload MEX binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: build/**/${{ matrix.artifact }}
+          if-no-files-found: warn
