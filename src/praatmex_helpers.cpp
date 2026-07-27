@@ -120,9 +120,17 @@ autoSound createSoundFromSamples(const double *samples, size_t nSamples, double 
 		 * uses when reading WAV files, so the resulting Sound object is
 		 * byte-identical to Praat.exe's.
 		 */
-		char tempPath[MAX_PATH];
-		GetTempPathA(MAX_PATH, tempPath);
-		strcat(tempPath, "praatmex_temp.wav");
+		#ifdef _WIN32
+			char tempPath[MAX_PATH];
+			GetTempPathA(MAX_PATH, tempPath);
+			strcat(tempPath, "praatmex_temp.wav");
+		#else
+			const char *tempDir = getenv("TMPDIR");
+			if (! tempDir)
+				tempDir = "/tmp";
+			char tempPath[1024];
+			snprintf(tempPath, sizeof(tempPath), "%s/praatmex_temp.wav", tempDir);
+		#endif
 
 		/* Write standard 32-bit float WAV (mono, IEEE float) */
 		{

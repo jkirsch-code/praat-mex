@@ -43,7 +43,10 @@ if (MSVC)
     target_compile_options(praat PUBLIC /permissive- /EHs /fp:precise /wd4068 /utf-8)
     target_compile_options(praat PRIVATE /wd4554 /bigobj)
 elseif(APPLE)
-    target_compile_definitions(praat PRIVATE PLATFORM_MACOS macintosh UNIX)
+    # NOTE: 'macintosh' is intentionally NOT defined. It triggers Objective-C includes
+    # (CoreFoundation, Carbon) in Praat's melder sources, which break when compiled as C++.
+    # macOS is fully covered by UNIX + PLATFORM_MACOS.
+    target_compile_definitions(praat PRIVATE PLATFORM_MACOS UNIX)
     target_compile_options(praat PUBLIC -fPIC -Wno-unused-parameter)
     target_link_libraries(praat PRIVATE
         "-framework CoreAudio" "-framework AudioToolbox" "-framework CoreFoundation"
