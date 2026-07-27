@@ -217,9 +217,6 @@ struct Formula_Result {
     double numericResult = 0.0;
 };
 
-void Formula_compile(Interpreter, Daata, conststring32, int, bool) {}
-void Formula_run(integer, integer, Formula_Result *) {}
-
 // ---- Picture stubs ----
 autoSomeThing<structPicture> Picture_create(GuiDrawingArea, bool) {
     return autoSomeThing<structPicture>();
