@@ -55,9 +55,13 @@ elseif(APPLE)
     # melder_audio.cpp reference Carbon types (TXNObject, EventRecord) in
     # #elif defined(macintosh) branches.  Some translation units get these via
     # transitive includes (e.g. through CoreFoundation), but others don't.
-    # Including Carbon.h uniformly ensures all units see the types.
+    # We use a wrapper (stubs/melder_carbon_safe.h) that applies Praat's own
+    # macport_on/macport_off renaming around Carbon/Carbon.h to prevent
+    # Carbon's `typedef OpaqueCollection* Collection` from colliding with
+    # Praat's Collection.h.
+    target_include_directories(praat PRIVATE ${STUBS_DIR})
     target_compile_options(praat PRIVATE
-        "-include" "Carbon/Carbon.h"
+        "-include" "melder_carbon_safe.h"
     )
     target_link_libraries(praat PRIVATE
         "-framework CoreAudio" "-framework AudioToolbox" "-framework CoreFoundation"
@@ -356,8 +360,9 @@ target_include_directories(praatmex_modules PRIVATE
 
 target_link_libraries(praatmex_modules PRIVATE praat)
 if(APPLE)
+    target_include_directories(praatmex_modules PRIVATE ${STUBS_DIR})
     target_compile_options(praatmex_modules PRIVATE -ObjC++
-        "-include" "Carbon/Carbon.h"
+        "-include" "melder_carbon_safe.h"
     )
 endif()
 
@@ -382,7 +387,8 @@ target_compile_definitions(praatmex PRIVATE
     NO_GUI NO_GRAPHICS NO_NETWORK NOMINMAX UNICODE _UNICODE
 )
 if(APPLE)
+    target_include_directories(praatmex PRIVATE ${STUBS_DIR})
     target_compile_options(praatmex PRIVATE
-        "-include" "Carbon/Carbon.h"
+        "-include" "melder_carbon_safe.h"
     )
 endif()
