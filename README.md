@@ -4,6 +4,26 @@
 
 ## 🚀 Quick Start
 
+### Option 1: Download Prebuilt Binaries (Recommended)
+1. Go to [GitHub Releases](https://github.com/jkirsch-code/praat-mex/releases)
+2. Download the MEX file for your platform:
+   - **Windows x64**: `praatmex.mexw64`
+   - **Linux x64**: `praatmex.mexa64`
+   - **macOS ARM64 (Apple Silicon)**: `praatmex.mexmaca64`
+3. Place the file in `+praatMEX/` folder
+4. Add `+praatMEX` to your MATLAB path
+
+### Option 2: Build from Source
+```bash
+git clone https://github.com/jkirsch-code/praat-mex.git
+cd praat-mex
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release
+# Output: build/praatmex.<mex-ext>
+# Then copy to +praatMEX/ or run from build/
+```
+
+### Use in MATLAB
 ```matlab
 % 1. Add to path (or install as toolbox)
 addpath('path/to/+praatMEX');
@@ -66,7 +86,6 @@ m = praatmex('mfcc',       ch1, fs);
 
 ```
 +praatMEX/
-├── praatmex.mexw64          ← Precompiled MEX (Windows x64)
 ├── src/                     ← 18 algorithm wrappers (C++)
 │   ├── praatmex.cpp         ← Dispatcher + error handling
 │   ├── praatmex_pitch.cpp
@@ -81,6 +100,11 @@ m = praatmex('mfcc',       ch1, fs);
 ├── praat/                   ← Patched Praat 7.0beta source (static lib)
 └── CMakeLists.txt           ← Build configuration
 ```
+
+**Prebuilt MEX files** (not in repo — download from [Releases](https://github.com/jkirsch-code/praat-mex/releases)):
+- `praatmex.mexw64`  — Windows x64
+- `praatmex.mexa64`  — Linux x64
+- `praatmex.mexmaca64` — macOS ARM64 (Apple Silicon)
 
 **Key design decisions:**
 - **Static linking**: Entire Praat core compiled into MEX → single file, no DLL hell
@@ -113,7 +137,7 @@ cmake --build build --config Release
 ```bash
 cmake -B build
 cmake --build build --config Release -j$(nproc)
-# Output: build/praatmex.mexa64  (or .mexmaci64 on macOS)
+# Output: build/praatmex.mexa64
 ```
 
 ### macOS (Intel / Apple Silicon)
@@ -127,6 +151,7 @@ cmake --build build --config Release
 - **MEX binary is MATLAB-version-locked**: Rebuild for each MATLAB version
 - **Static linking**: `praat` library ~96 MB → MEX ~8 MB (stripped)
 - **Build logs**: Check `build_log*.txt` for debugging
+- **CI builds**: GitHub Actions builds all 3 platforms on every tag — see [Releases](https://github.com/jkirsch-code/praat-mex/releases)
 
 ## 📋 Full Parameter Reference
 
@@ -215,4 +240,4 @@ Or see [`CITATION.cff`](CITATION.cff) for machine-readable metadata.
 
 ---
 
-**Version**: 1.0.0 | **Date**: 2026-07-26 | **MATLAB**: R2023a+ | **Platform**: Windows x64 (precompiled, tested), Linux/macOS (build from source, untested)
+**Version**: 1.0.0 | **Date**: 2026-07-27 | **MATLAB**: R2023a+ | **Precompiled binaries**: [GitHub Releases](https://github.com/jkirsch-code/praat-mex/releases) (Windows `.mexw64`, Linux `.mexa64`, macOS `.mexmaca64`) | **Build from source**: `cmake --build build --config Release`

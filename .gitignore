@@ -18,10 +18,6 @@ Makefile
 # MATLAB generated
 *.asv
 *.mex*
-!*.mexw64
-!*.mexa64
-!*.mexmaca64
-!*.mexmaci64
 
 # OS files
 .DS_Store
