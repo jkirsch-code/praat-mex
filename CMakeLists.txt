@@ -142,7 +142,9 @@ add_praat_subdir(
     INCLUDE_DIRS melder
     SOURCES ${MELDER_SOURCES}
 )
-target_include_directories(praat PRIVATE ${STUBS_DIR})
+if(MSVC)
+    target_include_directories(praat PRIVATE ${STUBS_DIR})
+endif()
 
 # ── sys ─────────────────────────────────────────────────────────────────────
 file(GLOB SYS_SOURCES "${PRAAT_SOURCE_DIR}/sys/*.cpp")
