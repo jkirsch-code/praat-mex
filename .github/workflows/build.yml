@@ -12,12 +12,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - os: windows-latest
-          #   cmake_flags: '-DCMAKE_GENERATOR_PLATFORM=x64'
-          #   artifact: praatmex.mexw64
-          # - os: ubuntu-latest
-          #   cmake_flags: ''
-          #   artifact: praatmex.mexa64
+          - os: windows-latest
+            cmake_flags: '-DCMAKE_GENERATOR_PLATFORM=x64'
+            artifact: praatmex.mexw64
+          - os: ubuntu-latest
+            cmake_flags: ''
+            artifact: praatmex.mexa64
           - os: macos-latest
             cmake_flags: ''
             artifact: praatmex.mexmaca64
