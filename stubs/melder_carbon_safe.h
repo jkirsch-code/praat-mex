@@ -18,4 +18,17 @@
 #include <Carbon/Carbon.h>
 #include "macport_off.h"
 
+/*
+ * Stubs for Carbon Event Manager APIs removed from macOS 15+ SDKs.
+ * Praat's melder_audio.cpp uses these for Escape key detection during
+ * audio playback.  Since we build a headless MEX (NO_GUI), these are
+ * harmless no-ops.
+ */
+#if ! defined(EventAvail)
+	static inline bool EventAvail (unsigned short /* mask */, void * /* event */) { return false; }
+#endif
+#if ! defined(FlushEvents)
+	static inline void FlushEvents (unsigned short /* whichMask */, unsigned short /* stopMask */) { }
+#endif
+
 #endif /* _MELDER_CARBON_SAFE_H_ */
