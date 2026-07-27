@@ -359,9 +359,15 @@ if(APPLE)
     )
 endif()
 
-Matlab_add_mex(NAME praatmex LINK_TO praatmex_modules
-    SRC src/praatmex.cpp
-)
+if(APPLE)
+    Matlab_add_mex(NAME praatmex MODULE NO_IMPLICIT_LINK_TO_MATLAB_LIBRARIES LINK_TO praatmex_modules
+        SRC src/praatmex.cpp
+    )
+else()
+    Matlab_add_mex(NAME praatmex LINK_TO praatmex_modules
+        SRC src/praatmex.cpp
+    )
+endif()
 target_include_directories(praatmex PRIVATE
     src
     ${Matlab_INCLUDE_DIRS}
@@ -398,18 +404,16 @@ if(APPLE)
         endif()
     endif()
 
-    # On macOS the C++ MEX adapter symbols are resolved at runtime by MATLAB.
-    # Tell the linker to allow them as undefined. Also ensure FindMatlab's
-    # own LINK_FLAGS are not silently lost by appending rather than setting.
-    get_target_property(_existing_lf praatmex LINK_FLAGS)
-    if(_existing_lf)
-        string(APPEND _existing_lf " ")
-    else()
-        set(_existing_lf "")
-    endif()
-    string(APPEND _existing_lf
-        " -Wl,-U,_mexCreateMexFunction -Wl,-U,_mexDestroyMexFunction -Wl,-U,_mexFunctionAdapter")
-    set_target_properties(praatmex PROPERTIES LINK_FLAGS "${_existing_lf}")
+    # On macOS, MODULE libraries use -bundle + -undefined dynamic_lookup,
+    # so C++ MEX adapter symbols (mexCreateMexFunction etc.) are resolved at
+    # runtime by MATLAB. Explicitly add -U as a safety net for older linkers.
+    target_link_options(praatmex PRIVATE
+        "LINKER:-U,_mexCreateMexFunction"
+        "LINKER:-U,_mexDestroyMexFunction"
+        "LINKER:-U,_mexFunctionAdapter"
+    )
+    # Ensure mexFunction is exported
+    target_compile_options(praatmex PRIVATE "-fvisibility=default")
 
     # Add RPATH so the loader finds MATLAB's dylibs at runtime
     set_target_properties(praatmex PROPERTIES
