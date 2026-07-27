@@ -119,25 +119,28 @@ file(GLOB FLAC_SOURCES "${PRAAT_SOURCE_DIR}/external/flac/*.c")
 add_praat_subdir(INCLUDE_DIRS melder SOURCES ${FLAC_SOURCES})
 
 # ── external/portaudio ──────────────────────────────────────────────────────
-file(GLOB PA_SOURCES "${PRAAT_SOURCE_DIR}/external/portaudio/*.c")
-# Exclude platform-specific files not for this platform
-if(WIN32)
-    file(GLOB PA_OTHER "${PRAAT_SOURCE_DIR}/external/portaudio/pa_linux_*.c"
-                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_mac_*.c"
-                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_unix_*.c"
-                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_jack.c")
-elseif(APPLE)
-    file(GLOB PA_OTHER "${PRAAT_SOURCE_DIR}/external/portaudio/pa_linux_*.c"
-                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_win_*.c"
-                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_unix_*.c"
-                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_jack.c")
-else()
-    file(GLOB PA_OTHER "${PRAAT_SOURCE_DIR}/external/portaudio/pa_win_*.c"
-                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_mac_*.c"
-                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_unix_*.c"
-                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_jack.c")
-endif()
-list(REMOVE_ITEM PA_SOURCES ${PA_OTHER})
+# Explicit list matching Praat's meson.build (no globbing — avoids platform-specific files
+# like pa_linux_asihpi.c, pa_x86_plain_converters.c, pa_mac_core_*.c that are not in
+# Praat's build and require external SDKs or MSVC inline asm)
+set(PA_SOURCES
+    "${PRAAT_SOURCE_DIR}/external/portaudio/pa_front.c"
+    "${PRAAT_SOURCE_DIR}/external/portaudio/pa_debugprint.c"
+    "${PRAAT_SOURCE_DIR}/external/portaudio/pa_cpuload.c"
+    "${PRAAT_SOURCE_DIR}/external/portaudio/pa_allocation.c"
+    "${PRAAT_SOURCE_DIR}/external/portaudio/pa_process.c"
+    "${PRAAT_SOURCE_DIR}/external/portaudio/pa_converters.c"
+    "${PRAAT_SOURCE_DIR}/external/portaudio/pa_dither.c"
+    "${PRAAT_SOURCE_DIR}/external/portaudio/pa_stream.c"
+    "${PRAAT_SOURCE_DIR}/external/portaudio/pa_ringbuffer.c"
+    "${PRAAT_SOURCE_DIR}/external/portaudio/pa_unix_hostapis.c"
+    "${PRAAT_SOURCE_DIR}/external/portaudio/pa_unix_util.c"
+    "${PRAAT_SOURCE_DIR}/external/portaudio/pa_linux_alsa.c"
+    "${PRAAT_SOURCE_DIR}/external/portaudio/pa_jack.c"
+    "${PRAAT_SOURCE_DIR}/external/portaudio/pa_win_hostapis.c"
+    "${PRAAT_SOURCE_DIR}/external/portaudio/pa_win_util.c"
+    "${PRAAT_SOURCE_DIR}/external/portaudio/pa_win_wmme.c"
+    "${PRAAT_SOURCE_DIR}/external/portaudio/pa_win_waveformat.c"
+)
 add_praat_subdir(SOURCES ${PA_SOURCES})
 
 # ═══════════════════════════════════════════════════════════════════════════
