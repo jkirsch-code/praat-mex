@@ -54,6 +54,10 @@ elseif(APPLE)
     )
     target_link_libraries(praat PRIVATE
         "-framework CoreAudio" "-framework AudioToolbox" "-framework CoreFoundation"
+        "-framework AppKit" "-framework Foundation"
+        "-framework Metal" "-framework MetalPerformanceShaders"
+        "-framework OpenCL" "-framework Accelerate"
+        z
     )
 elseif(UNIX)
     target_compile_definitions(praat PRIVATE PLATFORM_LINUX linux UNIX)
