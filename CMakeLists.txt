@@ -390,11 +390,3 @@ if(APPLE)
     # Use the classic linker as a workaround. (Deprecated but still works.)
     target_link_options(praatmex PRIVATE "LINKER:-ld_classic")
 endif()
-
-# Copy the MEX binary to the package root for easy addpath() use
-# (on Windows: praatmex.mexw64, Linux: praatmex.mexa64, macOS: praatmex.mexmaca64)
-add_custom_command(TARGET praatmex POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-        $<TARGET_FILE:praatmex>
-        ${CMAKE_CURRENT_SOURCE_DIR}/praatmex${Matlab_MEX_EXTENSION}
-    COMMENT "Copying MEX binary to package root")
