@@ -359,15 +359,9 @@ if(APPLE)
     )
 endif()
 
-if(APPLE)
-    Matlab_add_mex(NAME praatmex MODULE NO_IMPLICIT_LINK_TO_MATLAB_LIBRARIES LINK_TO praatmex_modules
-        SRC src/praatmex.cpp
-    )
-else()
-    Matlab_add_mex(NAME praatmex LINK_TO praatmex_modules
-        SRC src/praatmex.cpp
-    )
-endif()
+Matlab_add_mex(NAME praatmex LINK_TO praatmex_modules
+    SRC src/praatmex.cpp
+)
 target_include_directories(praatmex PRIVATE
     src
     ${Matlab_INCLUDE_DIRS}
@@ -390,33 +384,8 @@ if(APPLE)
     target_compile_options(praatmex PRIVATE -ObjC++
         "-include" "melder_carbon_safe.h"
     )
-
-    # Explicitly link MATLAB mex/mx libraries (FindMatlab may leave them empty on macOS ARM)
-    if(Matlab_MEX_LIBRARY AND Matlab_MX_LIBRARY)
-        target_link_libraries(praatmex ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY})
-    else()
-        file(GLOB _mex_libs "${Matlab_ROOT_DIR}/bin/maca64/libmex.*")
-        file(GLOB _mx_libs  "${Matlab_ROOT_DIR}/bin/maca64/libmx.*")
-        if(_mex_libs AND _mx_libs)
-            list(GET _mex_libs 0 _mex_lib)
-            list(GET _mx_libs 0 _mx_lib)
-            target_link_libraries(praatmex ${_mex_lib} ${_mx_lib})
-        endif()
-    endif()
-
-    # On macOS, MODULE libraries use -bundle + -undefined dynamic_lookup,
-    # so C++ MEX adapter symbols (mexCreateMexFunction etc.) are resolved at
-    # runtime by MATLAB. Explicitly add -U as a safety net for older linkers.
-    target_link_options(praatmex PRIVATE
-        "LINKER:-U,_mexCreateMexFunction"
-        "LINKER:-U,_mexDestroyMexFunction"
-        "LINKER:-U,_mexFunctionAdapter"
-    )
-    # Ensure mexFunction is exported
-    target_compile_options(praatmex PRIVATE "-fvisibility=default")
-
-    # Add RPATH so the loader finds MATLAB's dylibs at runtime
-    set_target_properties(praatmex PROPERTIES
-        BUILD_RPATH "${Matlab_ROOT_DIR}/bin/maca64"
-        INSTALL_RPATH "${Matlab_ROOT_DIR}/bin/maca64")
+    # Apple's new linker (ld-prime, macOS 15+) breaks the combination of
+    # -exported_symbols_list with -Wl,-U for C++ MEX adapter symbols.
+    # Use the classic linker as a workaround. (Deprecated but still works.)
+    target_link_options(praatmex PRIVATE "LINKER:-ld_classic")
 endif()
