@@ -384,27 +384,35 @@ if(APPLE)
     target_compile_options(praatmex PRIVATE -ObjC++
         "-include" "melder_carbon_safe.h"
     )
-    # Debug: print MATLAB library paths to diagnose macOS link failure
-    message(STATUS "[praatmex-debug] Matlab_MEX_LIBRARY=${Matlab_MEX_LIBRARY}")
-    message(STATUS "[praatmex-debug] Matlab_MX_LIBRARY=${Matlab_MX_LIBRARY}")
-    message(STATUS "[praatmex-debug] Matlab_INCLUDE_DIRS=${Matlab_INCLUDE_DIRS}")
-    message(STATUS "[praatmex-debug] Matlab_ROOT_DIR=${Matlab_ROOT_DIR}")
-    message(STATUS "[praatmex-debug] Matlab_EXTERN_LIBRARY_DIR=${Matlab_EXTERN_LIBRARY_DIR}")
-    message(STATUS "[praatmex-debug] Matlab_LIBRARIES=${Matlab_LIBRARIES}")
 
     # Explicitly link MATLAB mex/mx libraries (FindMatlab may leave them empty on macOS ARM)
     if(Matlab_MEX_LIBRARY AND Matlab_MX_LIBRARY)
         target_link_libraries(praatmex ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY})
     else()
-        # Fallback: locate libraries manually
-        file(GLOB _mex_libs "${Matlab_ROOT_DIR}/extern/lib/maca64/libmex.*")
-        file(GLOB _mx_libs  "${Matlab_ROOT_DIR}/extern/lib/maca64/libmx.*")
-        message(STATUS "[praatmex-debug] Fallback glob mex: ${_mex_libs}")
-        message(STATUS "[praatmex-debug] Fallback glob mx:  ${_mx_libs}")
+        file(GLOB _mex_libs "${Matlab_ROOT_DIR}/bin/maca64/libmex.*")
+        file(GLOB _mx_libs  "${Matlab_ROOT_DIR}/bin/maca64/libmx.*")
         if(_mex_libs AND _mx_libs)
             list(GET _mex_libs 0 _mex_lib)
             list(GET _mx_libs 0 _mx_lib)
             target_link_libraries(praatmex ${_mex_lib} ${_mx_lib})
         endif()
     endif()
+
+    # On macOS the C++ MEX adapter symbols are resolved at runtime by MATLAB.
+    # Tell the linker to allow them as undefined. Also ensure FindMatlab's
+    # own LINK_FLAGS are not silently lost by appending rather than setting.
+    get_target_property(_existing_lf praatmex LINK_FLAGS)
+    if(_existing_lf)
+        string(APPEND _existing_lf " ")
+    else()
+        set(_existing_lf "")
+    endif()
+    string(APPEND _existing_lf
+        " -Wl,-U,_mexCreateMexFunction -Wl,-U,_mexDestroyMexFunction -Wl,-U,_mexFunctionAdapter")
+    set_target_properties(praatmex PROPERTIES LINK_FLAGS "${_existing_lf}")
+
+    # Add RPATH so the loader finds MATLAB's dylibs at runtime
+    set_target_properties(praatmex PROPERTIES
+        BUILD_RPATH "${Matlab_ROOT_DIR}/bin/maca64"
+        INSTALL_RPATH "${Matlab_ROOT_DIR}/bin/maca64")
 endif()
