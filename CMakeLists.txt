@@ -386,5 +386,5 @@ if(APPLE)
     )
     # Matlab_add_mex doesn't link the MATLAB mex library on macOS.
     # Explicitly link against the mex and mx libraries.
-    target_link_libraries(praatmex PRIVATE ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY})
+    target_link_libraries(praatmex ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY})
 endif()
