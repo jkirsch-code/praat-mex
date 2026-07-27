@@ -47,7 +47,9 @@ elseif(APPLE)
     # Praat's melder sources include CoreFoundation/Carbon when 'macintosh' is defined.
     # On modern macOS SDKs (Xcode 26+) these headers transitively include Foundation.framework
     # which contains Objective-C syntax. -ObjC++ lets Clang parse both C++ and Objective-C.
-    target_compile_options(praat PUBLIC -ObjC++)
+    # We cannot use target_compile_options(PUBLIC) because that would also apply -ObjC++
+    # to C source files (portaudio, lame, flac, etc.) which are incompatible with it.
+    # Instead, apply -ObjC++ only to .cpp files after all sources are gathered.
     target_compile_options(praat PUBLIC -fPIC -Wno-unused-parameter)
     target_link_libraries(praat PRIVATE
         "-framework CoreAudio" "-framework AudioToolbox" "-framework CoreFoundation"
@@ -309,6 +311,18 @@ add_praat_subdir(
 )
 
 # ═══════════════════════════════════════════════════════════════════════════
+# Apply -ObjC++ to C++ sources only (macOS)
+# ═══════════════════════════════════════════════════════════════════════════
+if(APPLE)
+    get_target_property(_praat_sources praat SOURCES)
+    foreach(_src IN LISTS _praat_sources)
+        if(_src MATCHES "\\.(cpp|cxx|cc)$")
+            set_source_files_properties("${_src}" PROPERTIES COMPILE_OPTIONS "-ObjC++")
+        endif()
+    endforeach()
+endif()
+
+# ═══════════════════════════════════════════════════════════════════════════
 # MEX FILES
 # ═══════════════════════════════════════════════════════════════════════════
 
@@ -333,6 +347,9 @@ target_include_directories(praatmex_modules PRIVATE
 )
 
 target_link_libraries(praatmex_modules PRIVATE praat)
+if(APPLE)
+    target_compile_options(praatmex_modules PRIVATE -ObjC++)
+endif()
 
 Matlab_add_mex(NAME praatmex LINK_TO praatmex_modules
     SRC src/praatmex.cpp
