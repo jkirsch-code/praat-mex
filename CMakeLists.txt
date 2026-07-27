@@ -384,4 +384,7 @@ if(APPLE)
     target_compile_options(praatmex PRIVATE -ObjC++
         "-include" "melder_carbon_safe.h"
     )
+    # Matlab_add_mex doesn't link the MATLAB mex library on macOS.
+    # Explicitly link against the mex and mx libraries.
+    target_link_libraries(praatmex PRIVATE ${Matlab_MEX_LIBRARY} ${Matlab_MX_LIBRARY})
 endif()
