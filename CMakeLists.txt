@@ -120,12 +120,24 @@ add_praat_subdir(INCLUDE_DIRS melder SOURCES ${FLAC_SOURCES})
 
 # ── external/portaudio ──────────────────────────────────────────────────────
 file(GLOB PA_SOURCES "${PRAAT_SOURCE_DIR}/external/portaudio/*.c")
-# Exclude non-Windows platform-specific files
-file(GLOB PA_NONWIN "${PRAAT_SOURCE_DIR}/external/portaudio/pa_linux_*.c"
-                  "${PRAAT_SOURCE_DIR}/external/portaudio/pa_mac_*.c"
-                  "${PRAAT_SOURCE_DIR}/external/portaudio/pa_unix_*.c"
-                  "${PRAAT_SOURCE_DIR}/external/portaudio/pa_jack.c")
-list(REMOVE_ITEM PA_SOURCES ${PA_NONWIN})
+# Exclude platform-specific files not for this platform
+if(WIN32)
+    file(GLOB PA_OTHER "${PRAAT_SOURCE_DIR}/external/portaudio/pa_linux_*.c"
+                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_mac_*.c"
+                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_unix_*.c"
+                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_jack.c")
+elseif(APPLE)
+    file(GLOB PA_OTHER "${PRAAT_SOURCE_DIR}/external/portaudio/pa_linux_*.c"
+                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_win_*.c"
+                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_unix_*.c"
+                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_jack.c")
+else()
+    file(GLOB PA_OTHER "${PRAAT_SOURCE_DIR}/external/portaudio/pa_win_*.c"
+                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_mac_*.c"
+                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_unix_*.c"
+                      "${PRAAT_SOURCE_DIR}/external/portaudio/pa_jack.c")
+endif()
+list(REMOVE_ITEM PA_SOURCES ${PA_OTHER})
 add_praat_subdir(SOURCES ${PA_SOURCES})
 
 # ═══════════════════════════════════════════════════════════════════════════
