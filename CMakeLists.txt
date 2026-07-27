@@ -43,10 +43,11 @@ if (MSVC)
     target_compile_options(praat PUBLIC /permissive- /EHs /fp:precise /wd4068 /utf-8)
     target_compile_options(praat PRIVATE /wd4554 /bigobj)
 elseif(APPLE)
-    # NOTE: 'macintosh' is intentionally NOT defined. It triggers Objective-C includes
-    # (CoreFoundation, Carbon) in Praat's melder sources, which break when compiled as C++.
-    # macOS is fully covered by UNIX + PLATFORM_MACOS.
-    target_compile_definitions(praat PRIVATE PLATFORM_MACOS UNIX)
+    target_compile_definitions(praat PRIVATE PLATFORM_MACOS macintosh UNIX)
+    # Praat's melder sources include CoreFoundation/Carbon when 'macintosh' is defined.
+    # On modern macOS SDKs (Xcode 26+) these headers transitively include Foundation.framework
+    # which contains Objective-C syntax. -ObjC++ lets Clang parse both C++ and Objective-C.
+    target_compile_options(praat PUBLIC -ObjC++)
     target_compile_options(praat PUBLIC -fPIC -Wno-unused-parameter)
     target_link_libraries(praat PRIVATE
         "-framework CoreAudio" "-framework AudioToolbox" "-framework CoreFoundation"
@@ -347,4 +348,9 @@ target_include_directories(praatmex PRIVATE
     ${PRAAT_SOURCE_DIR}/fon
     ${PRAAT_SOURCE_DIR}/dwtools
     ${PRAAT_SOURCE_DIR}/LPC
+)
+# Propagate NO_GUI/NO_GRAPHICS to the MEX target (praatmex_modules links PRIVATE to praat,
+# so praat's PUBLIC definitions don't transitively reach this target).
+target_compile_definitions(praatmex PRIVATE
+    NO_GUI NO_GRAPHICS NO_NETWORK NOMINMAX UNICODE _UNICODE
 )
