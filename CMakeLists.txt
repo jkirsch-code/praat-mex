@@ -51,6 +51,15 @@ elseif(APPLE)
     # to C source files (portaudio, lame, flac, etc.) which are incompatible with it.
     # Instead, apply -ObjC++ only to .cpp files after all sources are gathered.
     target_compile_options(praat PUBLIC -fPIC -Wno-unused-parameter)
+    # Force-include Carbon compat stubs before every source file.  Modern macOS SDKs
+    # have removed Carbon MLTE (TXNObject/TXNFrameID) and Carbon Event Manager
+    # (EventRecord/keyDownMask/cmdKey) types, but Praat's Gui.h and melder_audio.cpp
+    # reference them in #elif defined(macintosh) branches.
+    target_compile_options(praat PRIVATE
+        "-include" "${CMAKE_CURRENT_SOURCE_DIR}/stubs/macos_carbon_compat.h"
+    )
+    # Carbon Event Manager stub implementations (EventAvail, FlushEvents)
+    target_sources(praat PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/stubs/macos_carbon_compat.cpp")
     target_link_libraries(praat PRIVATE
         "-framework CoreAudio" "-framework AudioToolbox" "-framework CoreFoundation"
     )
@@ -348,7 +357,9 @@ target_include_directories(praatmex_modules PRIVATE
 
 target_link_libraries(praatmex_modules PRIVATE praat)
 if(APPLE)
-    target_compile_options(praatmex_modules PRIVATE -ObjC++)
+    target_compile_options(praatmex_modules PRIVATE -ObjC++
+        "-include" "${CMAKE_CURRENT_SOURCE_DIR}/stubs/macos_carbon_compat.h"
+    )
 endif()
 
 Matlab_add_mex(NAME praatmex LINK_TO praatmex_modules
@@ -371,3 +382,8 @@ target_include_directories(praatmex PRIVATE
 target_compile_definitions(praatmex PRIVATE
     NO_GUI NO_GRAPHICS NO_NETWORK NOMINMAX UNICODE _UNICODE
 )
+if(APPLE)
+    target_compile_options(praatmex PRIVATE
+        "-include" "${CMAKE_CURRENT_SOURCE_DIR}/stubs/macos_carbon_compat.h"
+    )
+endif()
