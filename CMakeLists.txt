@@ -43,26 +43,13 @@ if (MSVC)
     target_compile_options(praat PUBLIC /permissive- /EHs /fp:precise /wd4068 /utf-8)
     target_compile_options(praat PRIVATE /wd4554 /bigobj)
 elseif(APPLE)
-    target_compile_definitions(praat PRIVATE PLATFORM_MACOS macintosh UNIX)
-    # Praat's melder sources include CoreFoundation/Carbon when 'macintosh' is defined.
-    # On modern macOS SDKs (Xcode 26+) these headers transitively include Foundation.framework
-    # which contains Objective-C syntax. -ObjC++ lets Clang parse both C++ and Objective-C.
-    # We cannot use target_compile_options(PUBLIC) because that would also apply -ObjC++
-    # to C source files (portaudio, lame, flac, etc.) which are incompatible with it.
-    # Instead, apply -ObjC++ only to .cpp files after all sources are gathered.
+    # We intentionally define 'linux' instead of 'macintosh' for headless (NO_GUI) builds.
+    # Defining 'macintosh' activates #elif defined(macintosh) branches in melder_audio.cpp
+    # (EventAvail/FlushEvents — removed from modern macOS SDKs), Gui.h (TXNObject/MLTE types),
+    # and melder.cpp (Carbon.h).  None of these are needed with NO_GUI.  Instead, 'linux'
+    # gives us POSIX APIs (pthreads, file I/O) without triggering Carbon-dependent code.
+    target_compile_definitions(praat PRIVATE PLATFORM_MACOS linux UNIX)
     target_compile_options(praat PUBLIC -fPIC -Wno-unused-parameter)
-    # Force-include Carbon headers before every source file.  Praat's Gui.h and
-    # melder_audio.cpp reference Carbon types (TXNObject, EventRecord) in
-    # #elif defined(macintosh) branches.  Some translation units get these via
-    # transitive includes (e.g. through CoreFoundation), but others don't.
-    # We use a wrapper (stubs/melder_carbon_safe.h) that applies Praat's own
-    # macport_on/macport_off renaming around Carbon/Carbon.h to prevent
-    # Carbon's `typedef OpaqueCollection* Collection` from colliding with
-    # Praat's Collection.h.
-    target_include_directories(praat PRIVATE ${STUBS_DIR})
-    target_compile_options(praat PRIVATE
-        "-include" "melder_carbon_safe.h"
-    )
     target_link_libraries(praat PRIVATE
         "-framework CoreAudio" "-framework AudioToolbox" "-framework CoreFoundation"
     )
@@ -322,16 +309,8 @@ add_praat_subdir(
     SOURCES ${SENSORS_SOURCES}
 )
 
-# ═══════════════════════════════════════════════════════════════════════════
-# Apply -ObjC++ to C++ sources only (macOS)
-# ═══════════════════════════════════════════════════════════════════════════
 if(APPLE)
-    get_target_property(_praat_sources praat SOURCES)
-    foreach(_src IN LISTS _praat_sources)
-        if(_src MATCHES "\\.(cpp|cxx|cc)$")
-            set_source_files_properties("${_src}" PROPERTIES COMPILE_OPTIONS "-ObjC++")
-        endif()
-    endforeach()
+    target_compile_options(praatmex PRIVATE -ObjC++)
 endif()
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -359,12 +338,6 @@ target_include_directories(praatmex_modules PRIVATE
 )
 
 target_link_libraries(praatmex_modules PRIVATE praat)
-if(APPLE)
-    target_include_directories(praatmex_modules PRIVATE ${STUBS_DIR})
-    target_compile_options(praatmex_modules PRIVATE -ObjC++
-        "-include" "melder_carbon_safe.h"
-    )
-endif()
 
 Matlab_add_mex(NAME praatmex LINK_TO praatmex_modules
     SRC src/praatmex.cpp
@@ -387,8 +360,5 @@ target_compile_definitions(praatmex PRIVATE
     NO_GUI NO_GRAPHICS NO_NETWORK NOMINMAX UNICODE _UNICODE
 )
 if(APPLE)
-    target_include_directories(praatmex PRIVATE ${STUBS_DIR})
-    target_compile_options(praatmex PRIVATE
-        "-include" "melder_carbon_safe.h"
-    )
+    target_compile_options(praatmex PRIVATE -ObjC++)
 endif()
